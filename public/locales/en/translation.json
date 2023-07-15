@@ -1,0 +1,13 @@
+{
+  "HOMEPAGE": {
+    "TEST1": "Test1",
+    "CONTENT1": "Layout&Content",
+    "TEST2": "Test2",
+    "CONTENT2": "Connect API",
+    "TEST3": "Test3",
+    "CONTENT3": "Form & Table",
+    "MOVESHAPE":"Move shape",
+    "MOVEPOSITION":"Move position"
+
+  }
+}
