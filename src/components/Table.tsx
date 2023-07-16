@@ -1,58 +1,36 @@
 import React, { useState } from "react";
 import { Button, Space, Switch, Table, Form, Input } from "antd";
-import type { ColumnsType } from "antd/es/table";
-import type { TableRowSelection } from "antd/es/table/interface";
+import type { ColumnsType, TableProps } from "antd/es/table";
+import type {
+  FilterValue,
+  SorterResult,
+  TableRowSelection,
+} from "antd/es/table/interface";
 import slice1, {
-  dataType,
   deleteUser,
   editUser,
   slice1Selector,
 } from "../store/slices/slice1";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../store/store";
+import { use } from "i18next";
+import { dataType } from "../model";
 
-// interface DataType {
-//   key: React.ReactNode;
-//   name: string;
-//   gender: string;
-//   phone: string;
-//   nationality:string;
-//   children?: DataType[];
-// }
-
-// rowSelection objects indicates the need for row selection
-const rowSelection: TableRowSelection<dataType> = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(
-      `selectedRowKeys: ${selectedRowKeys}`,
-      "selectedRows: ",
-      selectedRows
-    );
-  },
-  onSelect: (record, selected, selectedRows) => {
-    console.log(record, selected, selectedRows);
-  },
-  onSelectAll: (selected, selectedRows, changeRows) => {
-    console.log(selected, selectedRows, changeRows);
-  },
-};
-
-interface Props {
-  user: dataType;
-  setUser: React.Dispatch<React.SetStateAction<dataType>>;
-}
-
-const ShowTable: React.FC<Props> = ({ user, setUser }) => {
-  const [checkStrictly, setCheckStrictly] = useState(false);
+const ShowTable: React.FC = () => {
   const slice1Reducer = useSelector(slice1Selector);
-
   const dispatch = useAppDispatch();
-  // const del = (id:number) => {
-  //   dispatch(deleteUser(id));
-  // };
+  const [edit, setEdit] = useState<number | null>(null);
+  const [form] = Form.useForm();
 
-  const [edit, setEdit] = useState<number>(0);
-  const [form] =Form.useForm()
+  const [sortedInfo, setSortedInfo] = useState<SorterResult<dataType>>({});
+
+  const handleChange: TableProps<dataType>["onChange"] = (
+    pagination,
+    filters,
+    sorter
+  ) => {
+    setSortedInfo(sorter as SorterResult<dataType>);
+  };
 
   const columns: ColumnsType<dataType> = [
     {
@@ -62,7 +40,11 @@ const ShowTable: React.FC<Props> = ({ user, setUser }) => {
       render: (text, item) => {
         if (edit === item.key) {
           return (
-            <Form.Item name="firstname" rules={[{required:true}]} initialValue={item.firstname}>
+            <Form.Item
+              name="firstname"
+              rules={[{ required: true, message: "Please enter" }]}
+              initialValue={item.firstname}
+            >
               <Input value={item.firstname} />
             </Form.Item>
           );
@@ -70,6 +52,8 @@ const ShowTable: React.FC<Props> = ({ user, setUser }) => {
           return <p>{text}</p>;
         }
       },
+      sorter: (a, b) => a.firstname.localeCompare(b.firstname),
+      sortOrder: sortedInfo.columnKey === "firstname" ? sortedInfo.order : null,
     },
     {
       title: "นามสกุล",
@@ -78,7 +62,11 @@ const ShowTable: React.FC<Props> = ({ user, setUser }) => {
       render: (text, item) => {
         if (edit === item.key) {
           return (
-            <Form.Item name="lastname" initialValue={item.lastname}>
+            <Form.Item
+              name="lastname"
+              initialValue={item.lastname}
+              rules={[{ required: true, message: "Please enter" }]}
+            >
               <Input value={item.lastname} />
             </Form.Item>
           );
@@ -95,7 +83,11 @@ const ShowTable: React.FC<Props> = ({ user, setUser }) => {
       render: (text, item) => {
         if (edit === item.key) {
           return (
-            <Form.Item name="gender" initialValue={item.gender}>
+            <Form.Item
+              name="gender"
+              initialValue={item.gender}
+              rules={[{ required: true, message: "Please enter" }]}
+            >
               <Input value={item.gender} />
             </Form.Item>
           );
@@ -112,12 +104,15 @@ const ShowTable: React.FC<Props> = ({ user, setUser }) => {
         if (edit === item.key) {
           return (
             <>
-            <Form.Item name="phone" initialValue={item.phone}>
-              <Input value={item.phone} />
-            </Form.Item>
+              <Form.Item
+                name="phone"
+                initialValue={item.phone}
+                rules={[{ required: true, message: "Please enter" }]}
+              >
+                <Input value={item.phone} />
+              </Form.Item>
             </>
           );
-          
         } else {
           return <p>{text}</p>;
         }
@@ -130,7 +125,11 @@ const ShowTable: React.FC<Props> = ({ user, setUser }) => {
       render: (text, item) => {
         if (edit === item.key) {
           return (
-            <Form.Item name="nationality" initialValue={item.nationality}>
+            <Form.Item
+              name="nationality"
+              initialValue={item.nationality}
+              rules={[{ required: true, message: "Please enter" }]}
+            >
               <Input value={item.nationality} />
             </Form.Item>
           );
@@ -145,9 +144,7 @@ const ShowTable: React.FC<Props> = ({ user, setUser }) => {
       key: "del",
       render: (item) => {
         return (
-          <Button type="link" onClick={(e) => dispatch(deleteUser(item))}>
-            Delete
-          </Button>
+          <Button onClick={(e) => dispatch(deleteUser(item))}>Delete</Button>
         );
       },
     },
@@ -155,19 +152,17 @@ const ShowTable: React.FC<Props> = ({ user, setUser }) => {
       title: "แก้ไขข้อมูล",
       dataIndex: "",
       key: "edit",
-      render: (__, item) => {
+      render: (item) => {
         return (
           <>
             <Button
-              type="link"
               onClick={() => {
                 setEdit(item.key);
+                form.setFieldsValue({ ...item });
               }}
             >
               Edit
             </Button>
-            
-            
           </>
         );
       },
@@ -175,23 +170,17 @@ const ShowTable: React.FC<Props> = ({ user, setUser }) => {
   ];
 
   const saveEdit = (e: dataType) => {
-    
     dispatch(editUser({ ...e, key: edit }));
     setEdit(0);
-    
-    
   };
 
   return (
     <>
-      {console.log(slice1Reducer)}
       <Form onFinish={(e) => saveEdit(e)} form={form}>
-        <Table
-          columns={columns}
-          rowSelection={{ ...rowSelection, checkStrictly }}
-          dataSource={slice1Reducer}
-        />
-        <center>{edit?<Button htmlType="submit">Save</Button>:<></>}</center>
+        <Table columns={columns} onChange={handleChange} />
+        <center>
+          {edit ? <Button htmlType="submit">Save</Button> : <></>}
+        </center>
       </Form>
     </>
   );

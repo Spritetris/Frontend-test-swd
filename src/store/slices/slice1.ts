@@ -1,42 +1,12 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
+import { dataType } from "../../model";
+const items =
+  localStorage.getItem("users") !== null
+    ? JSON.parse(localStorage.getItem("users") || "")
+    : [];
 
-export type dataType = {
-  key: number;
-  firstname: string;
-  lastname: string;
-  gender: string;
-  phone: string;
-  nationality: string;
-  salary: number;
-  passport: string;
-  ID: string;
-};
-
-const initialValue: dataType[] = [
-  {
-    key: 1,
-    firstname: "Sprite",
-    lastname: "Woo",
-    phone: "0998898867",
-    gender: "female",
-    nationality: "Thai",
-    salary: 30000,
-    passport: "00000",
-    ID: "0000000000",
-  },
-  {
-    key: 2,
-    firstname: "Plew",
-    lastname: "Woo",
-    phone: "0998898867",
-    gender: "male",
-    nationality: "Thai",
-    salary: 30000,
-    passport: "00000",
-    ID: "0000000000",
-  },
-];
+const initialValue: dataType[] = items;
 
 const slice1 = createSlice({
   name: "slice1",
@@ -45,32 +15,37 @@ const slice1 = createSlice({
     addUser: (state, action) => {
       console.log(action.payload);
       state.push({ ...action.payload });
+      localStorage.setItem("users", JSON.stringify(state));
     },
     deleteUser: (state, action) => {
       const { key } = action.payload;
       console.log(action.payload);
       const uu = state.find((item) => item.key == key);
       if (uu) {
-        return state.filter((item) => item.key !== key);
+        localStorage.removeItem("users");
+        const newState = state.filter((item) => item.key !== key);
+        localStorage.setItem("users", JSON.stringify(newState));
+        return newState;
       }
     },
     editUser: (state, action) => {
-      const {key, firstname ,lastname,gender, phone, nationality}=action.payload;
-      console.log(action.payload)
+      const { key, firstname, lastname, gender, phone, nationality } =
+        action.payload;
+      console.log(action.payload);
       const uu = state.find((item) => item.key == key);
-      if(uu){
-        uu.firstname=firstname;
-        uu.lastname=lastname;
-        uu.gender=gender;
-        uu.phone=phone;
-        uu.nationality=nationality;
+      localStorage.removeItem("users");
+      if (uu) {
+        uu.firstname = firstname;
+        uu.lastname = lastname;
+        uu.gender = gender;
+        uu.phone = phone;
+        uu.nationality = nationality;
+        localStorage.setItem("users", JSON.stringify([...state]));
       }
-    
     },
   },
 });
 
-export const {} = slice1.actions;
 export const slice1Selector = (store: RootState) => store.slice1Reducer;
 export default slice1.reducer;
 export const { addUser, deleteUser, editUser } = slice1.actions;

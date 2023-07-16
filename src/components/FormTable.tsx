@@ -16,9 +16,10 @@ import {
 } from "antd";
 import "./FormTable.css";
 import ShowTable from "./Table";
-import { addUser, dataType } from "../store/slices/slice1";
-import { useDispatch } from "react-redux";
+import { addUser } from "../store/slices/slice1";
 import { useAppDispatch } from "../store/store";
+import { dataType } from "../model";
+import { Link } from "react-router-dom";
 
 const headerStyle: React.CSSProperties = {
   color: "black",
@@ -27,24 +28,8 @@ const headerStyle: React.CSSProperties = {
   backgroundColor: "transparent",
 };
 
-interface DataType {
-  key: React.ReactNode;
-  firstname: string;
-  lastname: string;
-  gender: string;
-  phone: string;
-  nationality: string;
-}
-
 const FormTable: React.FC = () => {
   const { t } = useTranslation();
-  const prefixSelector = (
-    <Form.Item name="prefix" noStyle>
-      <Select style={{ width: 70 }}>
-        <Select.Option value="66">+66</Select.Option>
-      </Select>
-    </Form.Item>
-  );
 
   const [user, setUser] = useState<dataType>({
     key: 0,
@@ -53,72 +38,112 @@ const FormTable: React.FC = () => {
     phone: "",
     gender: "",
     nationality: "",
-    salary:0,
-    passport:"",
-    ID:"",
+    salary: 0,
+    passport: "",
+    ID: "",
+    bdate: "",
   });
-
-  // const submitt = (e: React.FormEvent<HTMLFormElement>) => {
-  //   console.log(data);
-  // };
-
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
-    console.log(user);
-  };
 
   const dispatch = useAppDispatch();
 
   const handleSubmit = () => {
-    // e.preventDefault();
-    dispatch(addUser({ ...user ,key:Math.random()*1000}));
+    dispatch(addUser({ ...user, key: Math.round(Math.random() * 1000) }));
   };
 
   return (
     <div>
       <div className="header">
         <Header style={headerStyle}>{t("HOMEPAGE.CONTENT3")}</Header>
-        <LanguagePicker />
+        <div className="flexbtn">
+          <LanguagePicker />
+          <Link to="/">
+            <Button>หน้าหลัก</Button>
+          </Link>
+        </div>
       </div>
       <div className="flex">
         <Form onFinish={handleSubmit}>
           <Row>
-            <Form.Item label="คำนำหน้า" required={true} name="prefix">
+            <Form.Item
+              label="คำนำหน้า"
+              required={true}
+              name="prefix"
+              rules={[{ required: true, message: "Please select" }]}
+            >
               <Select>
                 <Select.Option value="mr">นาย</Select.Option>
                 <Select.Option value="mrs">นาง</Select.Option>
                 <Select.Option value="miss">นางสาว</Select.Option>
               </Select>
             </Form.Item>
-            <Form.Item label="ชื่อจริง" required={true} name="firstname">
-              <Input value={user.firstname} onChange={e =>setUser({...user,firstname:e.target.value})} />
+            <Form.Item
+              label="ชื่อจริง"
+              required={true}
+              name="firstname"
+              rules={[{ required: true, message: "Please enter" }]}
+            >
+              <Input
+                value={user.firstname}
+                onChange={(e) =>
+                  setUser({ ...user, firstname: e.target.value })
+                }
+              />
             </Form.Item>
-            <Form.Item label="นามสกุล" required={true} name="lastname">
+            <Form.Item
+              label="นามสกุล"
+              required={true}
+              name="lastname"
+              rules={[{ required: true, message: "Please enter" }]}
+            >
               <Input
                 value={user.lastname}
-                onChange={e =>setUser({...user,lastname:e.target.value})}
+                onChange={(e) => setUser({ ...user, lastname: e.target.value })}
               />
             </Form.Item>
           </Row>
           <Row>
-            <Form.Item label="วันเกิด" required={true} name="bdate">
+            <Form.Item
+              label="วันเกิด"
+              required={true}
+              name="bdate"
+              rules={[{ required: true, message: "Please select" }]}
+            >
               <DatePicker />
             </Form.Item>
-            <Form.Item label="สัญชาติ" required={true} name="nationality">
-              <Select onChange={e =>setUser({...user,nationality:e})}>
+            <Form.Item
+              label="สัญชาติ"
+              required={true}
+              name="nationality"
+              rules={[{ required: true, message: "Please select" }]}
+            >
+              <Select onChange={(e) => setUser({ ...user, nationality: e })}>
                 <Select.Option value="Thai">ไทย</Select.Option>
                 <Select.Option value="Chinese">จีน</Select.Option>
               </Select>
             </Form.Item>
           </Row>
           <Row>
-            <Form.Item label="เลขบัตรประชาชน" required={true} name="ID">
-              <Input onChange={e =>setUser({...user,ID:e.target.value})}/>
+            <Form.Item
+              label="เลขบัตรประชาชน"
+              required={true}
+              name="ID"
+              rules={[{ required: true, message: "Please enter" }]}
+            >
+              <Input
+                onChange={(e) => setUser({ ...user, ID: e.target.value })}
+              />
             </Form.Item>
           </Row>
           <Row>
-            <Form.Item label="เพศ" required={true} name="gender" >
-              <Radio.Group  onChange={e =>setUser({...user,gender:e.target.value})}>
+            <Form.Item
+              label="เพศ"
+              required={true}
+              name="gender"
+              rules={[{ required: true, message: "Please select" }]}
+            >
+              <Radio.Group
+                onChange={(e) => setUser({ ...user, gender: e.target.value })}
+              >
                 <Radio value="male">ผู้ชาย</Radio>
                 <Radio value="female">ผู้หญิง</Radio>
                 <Radio value="none">ไม่ระบุ</Radio>
@@ -131,13 +156,24 @@ const FormTable: React.FC = () => {
               label="หมายเลขโทรศัพท์มือถือ"
               required={true}
               name="phone"
+              rules={[{ required: true, message: "Please enter" }]}
             >
-              <Input style={{ width: 300 }} onChange={e =>setUser({...user,phone:e.target.value})} />
+              <Input
+                style={{ width: 300 }}
+                onChange={(e) => setUser({ ...user, phone: e.target.value })}
+              />
             </Form.Item>
           </Row>
           <Row>
-            <Form.Item label="หนังสือเดินทาง" required={true} name="passport">
-              <Input onChange={e =>setUser({...user,passport:e.target.value})}/>
+            <Form.Item
+              label="หนังสือเดินทาง"
+              required={true}
+              name="passport"
+              rules={[{ required: true, message: "Please enter" }]}
+            >
+              <Input
+                onChange={(e) => setUser({ ...user, passport: e.target.value })}
+              />
             </Form.Item>
           </Row>
 
@@ -146,8 +182,13 @@ const FormTable: React.FC = () => {
               label="เงินเดือนที่คาดหวัง"
               required={true}
               name="salary"
+              rules={[{ required: true, message: "Please enter" }]}
             >
-              <Input onChange={e =>setUser({...user,salary:Number(e.target.value)})}/>
+              <Input
+                onChange={(e) =>
+                  setUser({ ...user, salary: Number(e.target.value) })
+                }
+              />
             </Form.Item>
             <Space direction="horizontal" size={12}>
               <Button htmlType="reset">ล้างข้อมูล</Button>
@@ -158,7 +199,7 @@ const FormTable: React.FC = () => {
       </div>
 
       <div className="table">
-        <ShowTable user={user} setUser={setUser} />
+        <ShowTable />
       </div>
     </div>
   );

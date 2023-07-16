@@ -8,6 +8,11 @@
   margin-right: 300px;
 }
 
+hr{
+  margin: 30px 300px;
+  border: 0.01px solid #b1b1b1a2;
+}
+
 .move-position {
   width: 600px;
   height: 150px;

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import "./LanguagePicker.css";
 import { useTranslation } from "react-i18next";
+import { Select } from "antd";
 
 const LanguagePicker: React.FC = () => {
-
   const { i18n } = useTranslation();
 
   const handleLanguageChange = (lang: string) => {
@@ -13,10 +13,10 @@ const LanguagePicker: React.FC = () => {
   return (
     <>
       <div className="dropdown">
-        <select onChange={(e) => handleLanguageChange(e.target.value)}>
-          <option value="en">EN</option>
-          <option value="th">TH</option>
-        </select>
+        <Select onChange={(e) => handleLanguageChange(e)} style={{width:70}}>
+          <Select.Option value="en" selected>EN</Select.Option>
+          <Select.Option value="th">TH</Select.Option>
+        </Select>
       </div>
     </>
   );

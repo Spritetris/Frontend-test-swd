@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Layout, Space, Col, Row } from "antd";
+import { Layout, Space, Col, Row, Button } from "antd";
 import LanguagePicker from "./LanguagePicker";
 import "./Layoutstyle.css";
 import { useTranslation } from "react-i18next";
 import { shapeList } from "../model";
+import { Link } from "react-router-dom";
 
-const { Header, Footer, Sider, Content } = Layout;
-
+const { Header } = Layout;
 
 const headerStyle: React.CSSProperties = {
   color: "black",
@@ -16,7 +16,6 @@ const headerStyle: React.CSSProperties = {
 };
 
 const LayoutStyle: React.FC = () => {
-  
   const { t } = useTranslation();
   type shapes = {
     shapes: shapeList[];
@@ -88,27 +87,32 @@ const LayoutStyle: React.FC = () => {
     }
   };
 
-  function shuffle(a:any) {
+  function shuffle(a: any) {
     var j, x, i;
     for (i = a.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        x = a[i];
-        a[i] = a[j];
-        a[j] = x;
+      j = Math.floor(Math.random() * (i + 1));
+      x = a[i];
+      a[i] = a[j];
+      a[j] = x;
     }
     return a;
-}
-
-  const randomShape=()=>{
-    const result= shuffle(shapes)
-    setShape([...result])
   }
+
+  const randomShape = () => {
+    const result = shuffle(shapes);
+    setShape([...result]);
+  };
 
   return (
     <div>
       <div className="header">
         <Header style={headerStyle}>{t("HOMEPAGE.CONTENT1")}</Header>
-        <LanguagePicker />
+        <div className="flexbtn">
+          <LanguagePicker />
+          <Link to="/">
+            <Button>หน้าหลัก</Button>
+          </Link>
+        </div>
       </div>
 
       <Row justify="center">
@@ -156,41 +160,6 @@ const LayoutStyle: React.FC = () => {
             );
           })}
         </Row>
-        {/* <Row justify="end">
-          <Col span={4} className="move-shape">
-            <div className="arrow-box">
-              <div className="square"></div>
-            </div>
-          </Col>
-          <Col span={4} className="move-shape">
-            <div className="arrow-box">
-              <div className="circle"></div>
-            </div>
-          </Col>
-          <Col span={4} className="move-shape">
-            <div className="arrow-box">
-              <div className="oval"></div>
-            </div>
-          </Col>
-        </Row>
-
-        <Row justify="center">
-          <Col span={4} className="move-shape">
-            <div className="arrow-box">
-              <div className="trapezoid"></div>
-            </div>
-          </Col>
-          <Col span={4} className="move-shape">
-            <div className="arrow-box">
-              <div className="rectangle"></div>
-            </div>
-          </Col>
-          <Col span={4} className="move-shape">
-            <div className="arrow-box">
-              <div className="parallelogram"></div>
-            </div>
-          </Col>
-        </Row> */}
       </div>
     </div>
   );

@@ -1,15 +1,17 @@
-
-.container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.card{
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-    color: black;
-    margin: 10px;
-    padding: 0 20px;
-    
+.card {
+  width: 200px;
+  height: 80px;
+  margin: 5px;
+  border: none;
+  color: black;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  justify-content: center;
 }
