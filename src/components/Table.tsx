@@ -177,7 +177,11 @@ const ShowTable: React.FC = () => {
   return (
     <>
       <Form onFinish={(e) => saveEdit(e)} form={form}>
-        <Table columns={columns} onChange={handleChange} />
+        <Table
+          columns={columns}
+          dataSource={slice1Reducer}
+          onChange={handleChange}
+        />
         <center>
           {edit ? <Button htmlType="submit">Save</Button> : <></>}
         </center>
